@@ -55,7 +55,13 @@ export function _baseOptions (yargs) {
       describe: 'When available show various debug information',
       default: false,
       type: 'boolean'
-    });
+    })
+    .option('db', {
+      describe: 'Database to migrate',
+      default: null,
+      type: 'string'
+    })
+    ;
 }
 
 export function _underscoreOption (yargs) {

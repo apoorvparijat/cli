@@ -12,13 +12,17 @@ export function logMigrator (s) {
   }
 }
 
-function getSequelizeInstance () {
+function getSequelizeInstance (db = null) {
   let config = null;
 
   try {
     config = helpers.config.readConfig();
   } catch (e) {
     helpers.view.error(e);
+  }
+
+  if (db != null) {
+    config.database = db;
   }
 
   config = _.defaults(config, { logging: logMigrator });
@@ -40,7 +44,7 @@ export function getMigrator (type, args) {
       process.exit(1);
     }
 
-    const sequelize = getSequelizeInstance();
+    const sequelize = getSequelizeInstance(args.db);
     const migrator = new Umzug({
       storage: helpers.umzug.getStorage(type),
       storageOptions: helpers.umzug.getStorageOptions(type, { sequelize }),
