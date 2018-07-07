@@ -58,7 +58,7 @@ export function _baseOptions (yargs) {
     })
     .option('db', {
       describe: 'Database to migrate',
-      default: null,
+      default: false,
       type: 'string'
     })
     ;

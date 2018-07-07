@@ -12,7 +12,7 @@ export function logMigrator (s) {
   }
 }
 
-function getSequelizeInstance (db = null) {
+function getSequelizeInstance (db) {
   let config = null;
 
   try {
@@ -21,7 +21,7 @@ function getSequelizeInstance (db = null) {
     helpers.view.error(e);
   }
 
-  if (db != null) {
+  if (db) {
     config.database = db;
   }
 
