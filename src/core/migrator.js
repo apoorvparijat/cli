@@ -34,6 +34,49 @@ function getSequelizeInstance (db) {
   }
 }
 
+export function migratorProvider() {
+  return (type, args, schema = 'public') => {
+    return Bluebird.try(() => {
+      if (!(helpers.config.configFileExists() || args.url)) {
+        helpers.view.error(
+          'Cannot find "' + helpers.config.getConfigFile() +
+          '". Have you run "sequelize init"?'
+        );
+        process.exit(1);
+      }
+
+      const sequelize = getSequelizeInstance(args.db);
+      const queryInterface = sequelize.getQueryInterface();
+      queryInterface.schemaOption = schema;
+      const migrator = new Umzug({
+        storage: helpers.umzug.getStorage(type),
+        storageOptions: helpers.umzug.getStorageOptions(type, { sequelize, schema: schema }),
+        logging: helpers.view.log,
+        migrations: {
+          params: [sequelize.getQueryInterface(), Sequelize],
+          path: helpers.path.getPath(type),
+          pattern: /\.js$/,
+          wrap: fun => {
+            if (fun.length === 3) {
+              return Bluebird.promisify(fun);
+            } else {
+              return fun;
+            }
+          }
+        }
+      });
+
+      return sequelize
+        .authenticate()
+        .then(() => { 
+          console.log('~~~~ getMigrator(): returning migrator to then')
+          return migrator
+        })
+        .catch(e => helpers.view.error(e));
+    });
+  }
+}
+
 export function getMigrator (type, args, schema = 'public') {
   return Bluebird.try(() => {
     if (!(helpers.config.configFileExists() || args.url)) {
@@ -45,12 +88,14 @@ export function getMigrator (type, args, schema = 'public') {
     }
 
     const sequelize = getSequelizeInstance(args.db);
+    const queryInterface = sequelize.getQueryInterface();
+    queryInterface.schemaOption = schema;
     const migrator = new Umzug({
       storage: helpers.umzug.getStorage(type),
       storageOptions: helpers.umzug.getStorageOptions(type, { sequelize, schema: schema }),
       logging: helpers.view.log,
       migrations: {
-        params: [sequelize.getQueryInterface(), Sequelize, schema],
+        params: [sequelize.getQueryInterface(), Sequelize],
         path: helpers.path.getPath(type),
         pattern: /\.js$/,
         wrap: fun => {

@@ -1,5 +1,5 @@
 import { _baseOptions } from '../core/yargs';
-import { getMigrator, ensureCurrentMetaSchema, addTimestampsToSchema } from '../core/migrator';
+import { getMigrator, migratorProvider, ensureCurrentMetaSchema, addTimestampsToSchema } from '../core/migrator';
 
 import helpers from '../helpers';
 import _ from 'lodash';
@@ -26,7 +26,7 @@ exports.handler = async function (args) {
       await migrate(args);
       break;
     case 'db:migrate:tenant':
-      await migrate(args);
+      await migrateTenant(args);
       break;
     case 'db:migrate:schema:timestamps:add':
       await migrateSchemaTimestampAdd(args);
@@ -48,13 +48,13 @@ function migrateTenant(args) {
   });
   console.info('~~~~ migrateTenant(): number of promises:', migrationPromises.length);
   return Promise.all(migrationPromises).then((resolve, reject) => {
-    console.info('~~~~ migrateTenant(): all tenant migrations completed', resolve, reject);
+    console.info('~~~~ migrateTenant(): all tenant migrations completed');
     process.exit(0);
   });
 }
 
 function migrate(args, schema = 'public') {
-  return getMigrator('migration', args, schema).then(migrator => {
+  return migratorProvider()('migration', args, schema).then(migrator => {
     return ensureCurrentMetaSchema(migrator)
       .then(() => migrator.pending())
       .then(migrations => {

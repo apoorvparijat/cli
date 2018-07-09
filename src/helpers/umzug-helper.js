@@ -43,6 +43,7 @@ module.exports = {
       options.tableName = this.getTableName(type);
       if (extraOptions.schema) {
         options.schema = extraOptions.schema;
+        // options.schema = 'sps_emya_39';
         console.log('~~~~ getStorageOptions() options.schema =', options.schema);
       }
     }
