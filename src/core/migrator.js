@@ -34,7 +34,7 @@ function getSequelizeInstance (db) {
   }
 }
 
-export function getMigrator (type, args) {
+export function getMigrator (type, args, schema = 'public') {
   return Bluebird.try(() => {
     if (!(helpers.config.configFileExists() || args.url)) {
       helpers.view.error(
@@ -47,10 +47,10 @@ export function getMigrator (type, args) {
     const sequelize = getSequelizeInstance(args.db);
     const migrator = new Umzug({
       storage: helpers.umzug.getStorage(type),
-      storageOptions: helpers.umzug.getStorageOptions(type, { sequelize }),
+      storageOptions: helpers.umzug.getStorageOptions(type, { sequelize, schema: schema }),
       logging: helpers.view.log,
       migrations: {
-        params: [sequelize.getQueryInterface(), Sequelize],
+        params: [sequelize.getQueryInterface(), Sequelize, schema],
         path: helpers.path.getPath(type),
         pattern: /\.js$/,
         wrap: fun => {
@@ -65,7 +65,10 @@ export function getMigrator (type, args) {
 
     return sequelize
       .authenticate()
-      .then(() => migrator)
+      .then(() => { 
+        console.log('~~~~ getMigrator(): returning migrator to then')
+        return migrator
+      })
       .catch(e => helpers.view.error(e));
   });
 }

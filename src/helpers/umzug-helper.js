@@ -41,6 +41,10 @@ module.exports = {
       options.path = this.getStoragePath(type);
     } else if (this.getStorage(type) === 'sequelize') {
       options.tableName = this.getTableName(type);
+      if (extraOptions.schema) {
+        options.schema = extraOptions.schema;
+        console.log('~~~~ getStorageOptions() options.schema =', options.schema);
+      }
     }
 
     _.assign(options, extraOptions);

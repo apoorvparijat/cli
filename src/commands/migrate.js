@@ -25,6 +25,9 @@ exports.handler = async function (args) {
     case 'db:migrate':
       await migrate(args);
       break;
+    case 'db:migrate:tenant':
+      await migrate(args);
+      break;
     case 'db:migrate:schema:timestamps:add':
       await migrateSchemaTimestampAdd(args);
       break;
@@ -36,8 +39,22 @@ exports.handler = async function (args) {
   process.exit(0);
 };
 
-function migrate(args) {
-  return getMigrator('migration', args).then(migrator => {
+function migrateTenant(args) {
+  let migrationPromises = [];
+  const schemas = args.schema.split(',');
+  schemas.forEach((schema, index) => {
+    console.info('~~~~ migrateTenant()', schema);
+    migrationPromises.push(migrate(args, schema));
+  });
+  console.info('~~~~ migrateTenant(): number of promises:', migrationPromises.length);
+  return Promise.all(migrationPromises).then((resolve, reject) => {
+    console.info('~~~~ migrateTenant(): all tenant migrations completed', resolve, reject);
+    process.exit(0);
+  });
+}
+
+function migrate(args, schema = 'public') {
+  return getMigrator('migration', args, schema).then(migrator => {
     return ensureCurrentMetaSchema(migrator)
       .then(() => migrator.pending())
       .then(migrations => {
@@ -60,9 +77,15 @@ function migrate(args) {
           }
           options.from = args.from;
         }
+        console.info('~~~~ below 2nd then');
         return options;
       })
-      .then(options => migrator.up(options));
+      .then(options => {
+        return migrator.up(options)
+      })
+      .then(() => {
+        console.info('~~~~ migrate(): migrator.up() returned')
+      });
   }).catch(e => helpers.view.error(e));
 }
 

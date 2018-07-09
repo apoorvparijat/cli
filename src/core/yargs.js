@@ -61,6 +61,11 @@ export function _baseOptions (yargs) {
       default: false,
       type: 'string'
     })
+    .option('schema', {
+      describe: 'Schema to migrate',
+      default: 'public',
+      type: 'string'
+    })
     ;
 }
 
