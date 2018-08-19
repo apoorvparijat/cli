@@ -1,5 +1,5 @@
 import { _baseOptions } from '../core/yargs';
-import helpers from '../helpers';
+import helpers from '../helpers/index';
 
 exports.builder = yargs => _baseOptions(yargs)
   .option('force', {

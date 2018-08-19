@@ -1,7 +1,7 @@
 import { _baseOptions } from '../core/yargs';
 import { logMigrator } from '../core/migrator';
 
-import helpers from '../helpers';
+import helpers from '../helpers/index';
 import { cloneDeep, defaults } from 'lodash';
 import clc from 'cli-color';
 

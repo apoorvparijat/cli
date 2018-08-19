@@ -1,7 +1,7 @@
 import { _baseOptions } from '../core/yargs';
 import { getMigrator, ensureCurrentMetaSchema } from '../core/migrator';
 
-import helpers from '../helpers';
+import helpers from '../helpers/index';
 
 exports.builder =
   yargs =>

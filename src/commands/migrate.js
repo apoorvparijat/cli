@@ -1,7 +1,7 @@
 import { _baseOptions } from '../core/yargs';
 import { getMigrator, migratorProvider, ensureCurrentMetaSchema, addTimestampsToSchema } from '../core/migrator';
 
-import helpers from '../helpers';
+import helpers from '../helpers/index';
 import _ from 'lodash';
 
 exports.builder = yargs => _baseOptions(yargs)

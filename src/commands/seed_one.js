@@ -1,7 +1,7 @@
 import { _baseOptions } from '../core/yargs';
 import { getMigrator } from '../core/migrator';
 
-import helpers from '../helpers';
+import helpers from '../helpers/index';
 import path from 'path';
 
 exports.builder =

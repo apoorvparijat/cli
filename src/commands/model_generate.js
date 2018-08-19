@@ -1,6 +1,6 @@
 import { _baseOptions, _underscoreOption } from '../core/yargs';
 
-import helpers from '../helpers';
+import helpers from '../helpers/index';
 import clc from 'cli-color';
 
 exports.builder =

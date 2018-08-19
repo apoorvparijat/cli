@@ -1,6 +1,6 @@
 import { _baseOptions } from '../core/yargs';
 
-import helpers from '../helpers';
+import helpers from '../helpers/index';
 import fs from 'fs';
 import clc from 'cli-color';
 
